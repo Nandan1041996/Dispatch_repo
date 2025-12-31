@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L1 L2 Cost Analysis - Upload Files</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 500px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            font-size: 28px;
+            color: #333333;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .file-input-label.has-file {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .file-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .file-name {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+            word-break: break-all;
+        }
+
+        .required-columns {
+            font-size: 11px;
+            color: #ff6b6b;
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #fff5f5;
+            border-left: 3px solid #ff6b6b;
+            border-radius: 5px;
+            line-height: 1.5;
+        }
+
+        .note-box {
+            background-color: #fff9e6;
+            border-left: 3px solid #ffa500;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d97706;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">📊 Destination wise Lowest cost Model  Gain / Loss </div>
+        <div class="card-subtitle">Upload your files to begin processing</div>
+        
+        <div class="note-box">
+            <strong>📋 Note:</strong> Please ensure files are in .xlsx or .xls format
+        </div>
+
+        <form id="uploadForm" action="/upload_files" method="POST" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label for="pending_order_file">📦 Actual Despatch Data</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="pending_order_file" name="pending_order_file" accept=".xlsx, .xls" required>
+                    <label for="pending_order_file" class="file-input-label" id="pending_label">
+                        <span class="file-icon">📄</span>
+                        <span>Choose File</span>
+                    </label>
+                </div>
+                <div class="file-name" id="pending_file_name"></div>
+                <div class="required-columns">
+                    <strong>Required columns:</strong><br>
+                    Description, Billed Quantity, TOTAL_CALC_AMT, Plant, Mode of Transport, Distance in KM
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="rate_file">💰 Mode and Plantwise Rate Master</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="rate_file" name="rate_file" accept=".xlsx, .xls" required>
+                    <label for="rate_file" class="file-input-label" id="rate_label">
+                        <span class="file-icon">📄</span>
+                        <span>Choose File</span>
+                    </label>
+                </div>
+                <div class="file-name" id="rate_file_name"></div>
+                <div class="required-columns">
+                    <strong>Required columns:</strong><br>
+                    Plant, Dest. Desc., MODE, Total with STO
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    🚀 Process Files
+                </button>
+            </div>
+        </form>
+
+        <div class="loading" id="loadingDiv">
+            <div class="spinner"></div>
+            <p>Processing your files, please wait...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pendingInput = document.getElementById('pending_order_file');
+            const rateInput = document.getElementById('rate_file');
+            
+            const pendingLabel = document.getElementById('pending_label');
+            const rateLabel = document.getElementById('rate_label');
+            
+            const pendingFileName = document.getElementById('pending_file_name');
+            const rateFileName = document.getElementById('rate_file_name');
+
+            function updateFileLabel(input, label, fileNameDisplay) {
+                input.addEventListener('change', function(e) {
+                    if (this.files.length > 0) {
+                        const fileName = this.files[0].name;
+                        label.classList.add('has-file');
+                        label.innerHTML = '<span class="file-icon">✓</span><span>' + fileName + '</span>';
+                        fileNameDisplay.textContent = 'Selected: ' + fileName;
+                    } else {
+                        label.classList.remove('has-file');
+                        label.innerHTML = '<span class="file-icon">📄</span><span>Choose File</span>';
+                        fileNameDisplay.textContent = '';
+                    }
+                });
+            }
+
+            updateFileLabel(pendingInput, pendingLabel, pendingFileName);
+            updateFileLabel(rateInput, rateLabel, rateFileName);
+
+            document.getElementById('uploadForm').addEventListener('submit', function(event) {
+                if (pendingInput.files.length === 0 || rateInput.files.length === 0) {
+                    alert('⚠️ Please select all required files before uploading.');
+                    event.preventDefault();
+                    return;
+                }
+
+                // Show loading indicator
+                document.getElementById('loadingDiv').classList.add('active');
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('submitBtn').textContent = 'Processing...';
+            });
+        });
+    </script>
+</body>
+</html>

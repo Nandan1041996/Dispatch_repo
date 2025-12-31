@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L1 L2 Cost Analysis Results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card.positive .value {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card.negative .value {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .table-header h2 {
+            font-size: 24px;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        tbody tr:nth-child(even):hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #868f96 0%, #596164 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(89, 97, 100, 0.4);
+        }
+
+        .icon {
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        .scroll-hint {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Destination wise Lowest cost Model  Gain / Loss </h1>
+            <p>Comprehensive cost comparison and route optimization analysis</p>
+        </div>
+
+        <div class="content">
+            <!-- Statistics Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>💰 Total Amount</h3>
+                    <div class="value">₹{{ "{:,.2f}".format(total_amount) }}</div>
+                </div>
+                <div class="stat-card positive">
+                    <h3>🚚 Lowest Cost Route Total</h3>
+                    <div class="value">₹{{ "{:,.2f}".format(lowest_cost) }}</div>
+                </div>
+                <div class="stat-card {% if amount_diff > 0 %}negative{% else %}positive{% endif %}">
+                    <h3>📈 Amount Difference (Savings)</h3>
+                    <div class="value">₹{{ "{:,.2f}".format(amount_diff) }}</div>
+                </div>
+            </div>
+
+            <!-- Full Results Table -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h2> Complete Results</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in columns %}
+                                <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result_data %}
+                            <tr>
+                                {% for col in columns %}
+                                <td>
+                                    {% if row[col] is number %}
+                                        {{ "{:,.2f}".format(row[col]) if row[col] else '' }}
+                                    {% else %}
+                                        {{ row[col] if row[col] else '' }}
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scroll-hint">↔️ Scroll horizontally for more columns | ↕️ Scroll vertically for more rows</div>
+            </div>
+
+            <!-- Top 20 Results Table -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h2>🏆 Top 20 Destinations by Quantity</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in columns %}
+                                <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_20_data %}
+                            <tr>
+                                {% for col in columns %}
+                                <td>
+                                    {% if row[col] is number %}
+                                        {{ "{:,.2f}".format(row[col]) if row[col] else '' }}
+                                    {% else %}
+                                        {{ row[col] if row[col] else '' }}
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scroll-hint">↔️ Scroll horizontally for more columns | ↕️ Scroll vertically for more rows</div>
+            </div>
+
+            <!-- Download Buttons -->
+            <div class="button-container">
+                <a href="/download/full" class="btn btn-primary">
+                    <span class="icon">📥</span>
+                    Download Full Results
+                </a>
+                <a href="/download/top20" class="btn btn-success">
+                    <span class="icon">🏆</span>
+                    Download Top 20 Results
+                </a>
+                <a href="/" class="btn btn-secondary">
+                    <span class="icon">🏠</span>
+                    Back to Upload
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtered Sales Orders</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            font-size: 12px;
+        }
+        .container {
+            max-width: 100%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            margin-bottom: 20px;
+            background-color: white;
+            border: 0.5px solid #0a0a0a;
+            border-radius: 8px;
+        }
+        table th,
+        table td {
+            padding: 10px;
+            text-align: center; /* Center-aligns the text in table cells */
+            white-space: nowrap; /* Prevents text from wrapping */
+            overflow: hidden; /* Hides overflowed text */
+            text-overflow: ellipsis; /* Adds ellipsis for overflowed text */
+        }
+        table th {
+            background-color: #f2f2f2;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn-download {
+            display: block;
+            width: 10%;
+            text-align: center;
+            margin: 20px auto; /* Centers the button horizontally */
+            color: #0a0a0a; /* White text color */
+            background-color: #28a745; /* Green background */
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none; /* Ensures the button looks like a button, not a link */
+        }
+        .btn-download:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Filtered Sales Orders</h2>
+        <div class="table-responsive">
+            {{ filtered_df | safe }}
+        </div>
+        <!-- Download Button -->
+        <a href="{{ url_for('download_csv_trigger') }}" class="btn-download">Download CSV</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #FF6347;
+            text-align: center;
+            font-weight: bold; /* Make the font bold */
+            font-size: 24px; /* Adjust the font size */
+        }
+
+        h3{
+            color: #32302f;
+            text-align: center;
+            font-weight: bold; /* Make the font bold */
+            font-size: 24px; /* Adjust the font size */
+        }
+        p {
+            color: #333;
+            text-align: center;
+            font-size: 20px; /* Adjust the font size */
+            margin-top: 20px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Message</h2>
+        <p><h3>{{ error_message }}</h3></p>
+        <a href="/">Go back to upload page</a>
+    </div>
+</body>
+</html>

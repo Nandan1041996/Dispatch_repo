@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Order Selection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #090a09;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        h3 {
+            color: #090a09;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .search-container {
+            margin-bottom: 10px;
+        }
+        .search-container input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .order-list {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            padding: 5px;
+            height: 200px;
+            overflow-y: auto;
+        }
+        .order-item {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-item input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .select-all {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .select-all input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: rgb(15, 14, 14);
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 15%;
+            margin-left: 250px;
+            text-align: center;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a {
+            display: block;
+            margin-top: 10px;
+            margin-left: 20px;
+            text-align: center;
+            color: #45a049;
+            text-decoration: none;
+            font-size: 14px;
+            color: black;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Filter orders by typing
+            $('#searchInput').on('input', function() {
+                var searchValue = $(this).val().toLowerCase();
+                $('.order-item').each(function() {
+                    var text = $(this).text().toLowerCase();
+                    $(this).toggle(text.indexOf(searchValue) > -1);
+                });
+            });
+
+            // Handle Select All/None
+            $('#selectAll').on('change', function() {
+                var isChecked = $(this).is(':checked');
+                $('.order-item input[type="checkbox"]').prop('checked', isChecked);
+            });
+
+            // Handle form submission
+            $('#submitForm').on('click', function(event) {
+                event.preventDefault();
+                var selectedOrders = [];
+                $('.order-item input[type="checkbox"]:checked').each(function() {
+                    selectedOrders.push($(this).val());
+                });
+                if (selectedOrders.length === 0) {
+                    alert('Please select at least one Sales Order.');
+                    return;
+                }
+                // Redirect to another URL with selected Sales Orders
+                window.location.href = '/process_orders?orders=' + selectedOrders.join(',');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Sales Order Selection</h2>
+
+        <h3>Select Sales Orders:</h3>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search sales orders...">
+        </div>
+        <form id="selectForm">
+            <div class="select-all">
+                <input type="checkbox" id="selectAll">
+                <label for="selectAll">Select All</label>
+            </div>
+            <div class="order-list">
+                {% for order_id in sales_orders %}
+                    <div class="order-item">
+                        <input type="checkbox" value="{{ order_id }}">
+                        {{ order_id }}
+                    </div>
+                {% endfor %}
+            </div>
+            <button id="submitForm">Submit</button>
+        </form>
+
+        <a href="/">Back to Order Assignment Page</a>
+    </div>
+</body>
+</html>
